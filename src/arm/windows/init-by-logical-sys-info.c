@@ -751,7 +751,7 @@ void store_core_info_per_processor(
 		processors[processor_global_index].core = cores + core_id;
 		cores[core_id].core_id = core_id;
 		get_core_uarch_for_efficiency(
-			chip_info->chip_name,
+			chip_info,
 			core_info->Processor.EfficiencyClass,
 			&(cores[core_id].uarch),
 			&(cores[core_id].frequency));
