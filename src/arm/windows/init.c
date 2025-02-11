@@ -75,7 +75,7 @@ static wchar_t* read_registry(LPCWSTR subkey, LPCWSTR value) {
 		NULL, /* Request buffer size */
 		&data_size);
 	if (result != 0 || data_size == 0) {
-		cpuinfo_log_error("Registry entry size read error");
+        cpuinfo_log_error("Registry entry size read error: %ld", result);
 		return NULL;
 	}
 
@@ -117,7 +117,7 @@ static struct woa_chip_info* get_system_info_from_registry(void) {
 		return NULL;
 	}
 
-	cpuinfo_log_error("detected chip model name: %s", text_buffer);
+	cpuinfo_log_error("detected chip model name: %ls", text_buffer);
 
 	/* Read processor model processor part from registry  */
 	text_buffer = read_registry(cpu0_subkey, frequency_value);
@@ -126,7 +126,7 @@ static struct woa_chip_info* get_system_info_from_registry(void) {
 		return NULL;
 	}
 
-	cpuinfo_log_error("detected processor part: %s", text_buffer);
+	cpuinfo_log_error("detected processor part: %ls", text_buffer);
 	
 	/* Read processor model frequency from registry  */
 	text_buffer = read_registry(cpu0_subkey, processor_part_value);
@@ -135,7 +135,14 @@ static struct woa_chip_info* get_system_info_from_registry(void) {
 		return NULL;
 	}
 
-	cpuinfo_log_error("detected frequency: %s", text_buffer);
+	cpuinfo_log_error("detected frequency: %ls", text_buffer);
+
+	/* Allocate memory for cpuinfo */
+	cpuinfo = (struct woa_chip_info*)malloc(sizeof(struct woa_chip_info));
+	if (cpuinfo == NULL) {
+		cpuinfo_log_error("Memory allocation failed for cpuinfo");
+		return NULL;
+	}
 
 	/* Initialize CPU info with logical system information */
 	cpuinfo->chip_name_string = text_buffer;
